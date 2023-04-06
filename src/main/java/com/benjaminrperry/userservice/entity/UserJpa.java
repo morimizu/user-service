@@ -1,6 +1,10 @@
 package com.benjaminrperry.userservice.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,7 +15,7 @@ import java.time.Instant;
 @Table(name = "users")
 @Getter
 @Setter
-public class UserJpa implements User{
+public class UserJpa implements User {
     @Id
     @GeneratedValue
     private Long id;
