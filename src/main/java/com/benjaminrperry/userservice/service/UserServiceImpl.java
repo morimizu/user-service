@@ -9,6 +9,8 @@ import com.benjaminrperry.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
+
 import static com.benjaminrperry.userservice.converter.UserConverter.toDto;
 
 @Service
@@ -18,7 +20,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDTO registerNewUser(CreateUserDTO createUserDTO) {
+    public UserDTO registerNewUser(@Valid CreateUserDTO createUserDTO) {
         UserJpa user = new UserJpa();
         user.setUsername(createUserDTO.getUsername());
         user.setEmail(createUserDTO.getEmail());
@@ -26,11 +28,11 @@ public class UserServiceImpl implements UserService {
         return toDto(userRepository.save(user));
     }
 
-    private void validateNewUser(CreateUserDTO createUserDTO){
-        if(emailAlreadyExists(createUserDTO.getEmail())){
+    private void validateNewUser(CreateUserDTO createUserDTO) {
+        if (emailAlreadyExists(createUserDTO.getEmail())) {
             throw new EmailExistsException();
         }
-        if(usernameAlreadyExists(createUserDTO.getUsername())){
+        if (usernameAlreadyExists(createUserDTO.getUsername())) {
             throw new UsernameExistsException();
         }
     }

@@ -19,6 +19,29 @@
 		<groovy.version>4.0.5</groovy.version>
 	</properties>
 
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<skip.untit.tests>false</skip.untit.tests>
+				<skip.intgration.tests>true</skip.intgration.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>integration-test</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<skip.untit.tests>true</skip.untit.tests>
+				<skip.intgration.tests>false</skip.intgration.tests>
+			</properties>
+		</profile>
+	</profiles>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -30,7 +53,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webflux</artifactId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.flywaydb</groupId>
@@ -79,19 +102,30 @@
 			<artifactId>groovy</artifactId>
 			<version>${groovy.version}</version>
 		</dependency>
-		<dependency> <!-- enables mocking of classes (in addition to interfaces) -->
+		<!-- <dependency> 
 			<groupId>net.bytebuddy</groupId>
 			<artifactId>byte-buddy</artifactId>
 			<version>1.12.17</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency> <!-- enables mocking of classes without default constructor (together with ByteBuddy or CGLIB) -->
+		</dependency> 
+		<dependency> 
 			<groupId>org.objenesis</groupId>
 			<artifactId>objenesis</artifactId>
 			<version>3.3</version>
 			<scope>test</scope>
-		</dependency>
-	</dependencies>
+		</dependency> -->
+	
+<!--		<dependency>-->
+<!--			<groupId>org.hibernate</groupId>-->
+<!--			<artifactId>hibernate-validator</artifactId>-->
+<!--			<version>6.2.5.Final</version>-->
+<!--		</dependency>-->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
+    </dependencies>
 
 	<dependencyManagement>
 		<dependencies>
@@ -152,7 +186,6 @@
 				<executions>
 					<execution>
 						<goals>
-							<goal>compile</goal>
 							<goal>addTestSources</goal>
 							<goal>compileTests</goal>
 						</goals>
@@ -169,7 +202,27 @@
 					</includes>
 				</configuration>
 			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>org.codehaus.mojo</groupId>-->
+<!--				<artifactId>build-helper-maven-plugin</artifactId>-->
+<!--				<version>3.3.0</version>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>add-integration-test-resources</id>-->
+<!--						<goals>-->
+<!--							<goal>add-test-resource</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<resources>-->
+<!--								<resource>-->
+<!--									<directory>src/test/integration-test/resources</directory>-->
+<!--									<filtering>true</filtering>-->
+<!--								</resource>-->
+<!--							</resources>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
 		</plugins>
 	</build>
-
 </project>
