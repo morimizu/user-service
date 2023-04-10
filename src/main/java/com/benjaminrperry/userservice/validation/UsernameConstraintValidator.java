@@ -1,11 +1,13 @@
 package com.benjaminrperry.userservice.validation;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.lang.annotation.Annotation;
 
+@Component
 @RequiredArgsConstructor
 public class UsernameConstraintValidator implements ConstraintValidator<Annotation, String> {
 

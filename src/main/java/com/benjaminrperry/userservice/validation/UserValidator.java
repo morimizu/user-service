@@ -2,7 +2,9 @@ package com.benjaminrperry.userservice.validation;
 
 import com.benjaminrperry.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@Component
 @RequiredArgsConstructor
 public class UserValidator {
 
