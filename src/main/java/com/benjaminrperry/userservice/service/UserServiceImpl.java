@@ -3,13 +3,11 @@ package com.benjaminrperry.userservice.service;
 import com.benjaminrperry.userservice.dto.CreateUserDTO;
 import com.benjaminrperry.userservice.dto.UserDTO;
 import com.benjaminrperry.userservice.entity.UserJpa;
-import com.benjaminrperry.userservice.exception.EmailExistsException;
-import com.benjaminrperry.userservice.exception.UsernameExistsException;
 import com.benjaminrperry.userservice.repository.UserRepository;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.validation.Valid;
 
 import static com.benjaminrperry.userservice.converter.UserConverter.toDto;
 
@@ -19,8 +17,11 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    private final Validator validator;
+
     @Override
-    public UserDTO registerNewUser(@Valid CreateUserDTO createUserDTO) {
+    public UserDTO registerNewUser(CreateUserDTO createUserDTO) {
+//        validateNewUser(createUserDTO);
         UserJpa user = new UserJpa();
         user.setUsername(createUserDTO.getUsername());
         user.setEmail(createUserDTO.getEmail());
@@ -29,11 +30,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateNewUser(CreateUserDTO createUserDTO) {
-        if (emailAlreadyExists(createUserDTO.getEmail())) {
-            throw new EmailExistsException();
-        }
-        if (usernameAlreadyExists(createUserDTO.getUsername())) {
-            throw new UsernameExistsException();
+        var violations = validator.validate(createUserDTO);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
         }
     }
 

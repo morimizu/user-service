@@ -16,44 +16,36 @@
 
 	<properties>
 		<java.version>17</java.version>
-		<groovy.version>4.0.5</groovy.version>
+		<skip.intgration.tests>false</skip.intgration.tests>
 	</properties>
 
-	<profiles>
-		<profile>
-			<id>dev</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<skip.untit.tests>false</skip.untit.tests>
-				<skip.intgration.tests>true</skip.intgration.tests>
-			</properties>
-		</profile>
-		<profile>
-			<id>integration-test</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<skip.untit.tests>true</skip.untit.tests>
-				<skip.intgration.tests>false</skip.intgration.tests>
-			</properties>
-		</profile>
-	</profiles>
+<!--	<profiles>-->
+<!--		<profile>-->
+<!--			<id>dev</id>-->
+<!--			<activation>-->
+<!--				<activeByDefault>true</activeByDefault>-->
+<!--			</activation>-->
+<!--			<properties>-->
+<!--				<skip.untit.tests>false</skip.untit.tests>-->
+<!--				<skip.intgration.tests>false</skip.intgration.tests>-->
+<!--			</properties>-->
+<!--		</profile>-->
+<!--		<profile>-->
+<!--			<id>integration-test</id>-->
+<!--			<activation>-->
+<!--				<activeByDefault>false</activeByDefault>-->
+<!--			</activation>-->
+<!--			<properties>-->
+<!--				<skip.untit.tests>true</skip.untit.tests>-->
+<!--				<skip.intgration.tests>false</skip.intgration.tests>-->
+<!--			</properties>-->
+<!--		</profile>-->
+<!--	</profiles>-->
 
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -66,12 +58,6 @@
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -88,16 +74,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.spockframework</groupId>
-			<artifactId>spock-core</artifactId>
-			<scope>test</scope>
-		</dependency>
 
 		<dependency>
 			<groupId>org.spockframework</groupId>
@@ -105,35 +81,12 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
-			<groupId>org.apache.groovy</groupId>
-			<artifactId>groovy</artifactId>
-			<version>${groovy.version}</version>
+		<dependency>
+			<groupId>org.spockframework</groupId>
+			<artifactId>spock-junit4</artifactId>
+			<scope>test</scope>
 		</dependency>
 
-		<!-- <dependency> 
-			<groupId>net.bytebuddy</groupId>
-			<artifactId>byte-buddy</artifactId>
-			<version>1.12.17</version>
-			<scope>test</scope>
-		</dependency> 
-		<dependency> 
-			<groupId>org.objenesis</groupId>
-			<artifactId>objenesis</artifactId>
-			<version>3.3</version>
-			<scope>test</scope>
-		</dependency> -->
-	
-<!--		<dependency>-->
-<!--			<groupId>org.hibernate</groupId>-->
-<!--			<artifactId>hibernate-validator</artifactId>-->
-<!--			<version>6.2.5.Final</version>-->
-<!--		</dependency>-->
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-            <version>2.0.1.Final</version>
-        </dependency>
     </dependencies>
 
 	<dependencyManagement>
@@ -185,7 +138,13 @@
 					<parallelParsing>true</parallelParsing>
 					<testSources>
 						<testSource>
-							<directory>${project.basedir}/src/test/groovy</directory>
+							<directory>src/test/groovy</directory>
+							<includes>
+								<include>**/*.groovy</include>
+							</includes>
+						</testSource>
+						<testSource>
+							<directory>src/test/integration/groovy</directory>
 							<includes>
 								<include>**/*.groovy</include>
 							</includes>
@@ -206,9 +165,19 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.0.0-M7</version>
 				<configuration>
+					<useModulePath>false</useModulePath> <!-- https://issues.apache.org/jira/browse/SUREFIRE-1809 -->
+					<useFile>false</useFile>
 					<includes>
-						<include>%regex[com.*(Spec|Specification).class]</include>
+						<include>**/*Spec</include>
 					</includes>
+					<statelessTestsetReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
+						<disable>false</disable>
+						<version>3.0</version>
+						<usePhrasedFileName>false</usePhrasedFileName>
+						<usePhrasedTestSuiteClassName>true</usePhrasedTestSuiteClassName>
+						<usePhrasedTestCaseClassName>true</usePhrasedTestCaseClassName>
+						<usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
+					</statelessTestsetReporter>
 				</configuration>
 			</plugin>
 <!--			<plugin>-->
@@ -218,20 +187,44 @@
 <!--				<executions>-->
 <!--					<execution>-->
 <!--						<id>add-integration-test-resources</id>-->
+<!--						<phase>generate-test-resources</phase>-->
 <!--						<goals>-->
 <!--							<goal>add-test-resource</goal>-->
 <!--						</goals>-->
 <!--						<configuration>-->
 <!--							<resources>-->
 <!--								<resource>-->
-<!--									<directory>src/test/integration-test/resources</directory>-->
-<!--									<filtering>true</filtering>-->
+<!--									<directory>src/test/resources</directory>-->
 <!--								</resource>-->
 <!--							</resources>-->
 <!--						</configuration>-->
 <!--					</execution>-->
 <!--				</executions>-->
 <!--			</plugin>-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<!-- here the phase you need -->
+						<phase>validate</phase>
+						<goals>
+							<goal>testResources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/extra-resources</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/non-packaged-resources</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>
