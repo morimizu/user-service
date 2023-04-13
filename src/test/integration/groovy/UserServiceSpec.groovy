@@ -1,10 +1,10 @@
 import com.benjaminrperry.userservice.UserServiceApplication
 import com.benjaminrperry.userservice.dto.CreateUserDTO
 import com.benjaminrperry.userservice.service.UserService
-import jakarta.validation.ConstraintDeclarationException
 import jakarta.validation.ConstraintViolationException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -13,12 +13,9 @@ class UserServiceSpec extends Specification {
 
     @Autowired
     UserService userService
+    @Shared
+    Random random = new Random()
 
-    Random random
-
-    def setup(){
-        random = new Random()
-    }
 
     def createUserDto(username = "testUser", email = "test@test.com", password = "password") {
         CreateUserDTO.builder()
@@ -28,40 +25,38 @@ class UserServiceSpec extends Specification {
                 .build()
     }
 
-//    @Unroll
     def 'create passes'() {
         given:
         def testUser = "testUser${random.nextInt()}"
         def testEmail = "${testUser}@test.com"
-        def dto = createUserDto(testUser.toString(),testEmail.toString())
+        def dto = createUserDto(testUser.toString(), testEmail.toString())
 
         when:
         def result = userService.registerNewUser(dto)
 
         then:
         noExceptionThrown()
+        result
 
-//        where:
-//        test                           | exists | passes
-//        'non existing username passes' | false  | true
-//        'existing username fails'      | true   | false
     }
 
-//    @Unroll
+    @Unroll
     def 'trigger validation exception - #test'() {
         given:
-        def dto = createUserDto()
+
+        def dto = createUserDto(usrname, email)
 
         when:
-        def result = userService.registerNewUser(dto)
+        userService.registerNewUser(dto)
 
         then:
-        thrown(ConstraintViolationException)
+        def error = thrown(ConstraintViolationException)
 
-//        where:
-//        test                           | exists | passes
-//        'non existing username passes' | false  | true
-//        'existing username fails'      | true   | false
+
+        where:
+        test              | usrname                                  | email
+        'username exists' | 'testUser'                               | "testUser${random.nextInt()}@test.com".toString()
+        'email exists'    | "testUser${random.nextInt()}".toString() | 'testUser@test.com'
     }
 
 
