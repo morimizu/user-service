@@ -2,11 +2,10 @@ package com.benjaminrperry.userservice.service;
 
 import com.benjaminrperry.userservice.dto.CreateUserDTO;
 import com.benjaminrperry.userservice.dto.UserDTO;
+import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 
+@Validated
 public interface UserService {
-    UserDTO registerNewUser(CreateUserDTO createUserDTO);
-
-    boolean emailAlreadyExists(String email);
-
-    boolean usernameAlreadyExists(String username);
+    UserDTO registerNewUser(@Valid CreateUserDTO createUserDTO);
 }
