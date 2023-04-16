@@ -3,30 +3,28 @@ package com.benjaminrperry.userservice.controller;
 import com.benjaminrperry.userservice.dto.CreateUserDTO;
 import com.benjaminrperry.userservice.dto.UserDTO;
 import com.benjaminrperry.userservice.service.UserService;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequiredArgsConstructor
-@Validated
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/user")
-
-    public ResponseEntity<UserDTO> registerNewUser(@Valid @RequestBody CreateUserDTO createUserDTO) {
+    @PostMapping("/users")
+    @ResponseStatus(CREATED)
+    public ResponseEntity<UserDTO> registerNewUser(@RequestBody CreateUserDTO createUserDTO) {
         return ResponseEntity.ok(userService.registerNewUser(createUserDTO));
     }
 

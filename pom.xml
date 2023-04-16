@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.5</version>
+		<version>2.7.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.benjaminrperry</groupId>
@@ -75,6 +75,7 @@
 			<scope>test</scope>
 		</dependency>
 
+
 		<dependency>
 			<groupId>org.spockframework</groupId>
 			<artifactId>spock-spring</artifactId>
@@ -86,6 +87,26 @@
 			<artifactId>spock-junit4</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
+			<groupId>org.apache.groovy</groupId>
+			<artifactId>groovy-json</artifactId>
+			<version>4.0.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>java-hamcrest</artifactId>
+			<version>2.0.0.0</version>
+			<scope>test</scope>
+		</dependency>
+
+
+<!--		<dependency>-->
+<!--			<groupId>com.github.tomakehurst</groupId>-->
+<!--			<artifactId>wiremock</artifactId>-->
+<!--			<version>2.27.2</version>-->
+<!--		</dependency>-->
 
     </dependencies>
 
@@ -170,14 +191,14 @@
 					<includes>
 						<include>**/*Spec</include>
 					</includes>
-					<statelessTestsetReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
-						<disable>false</disable>
-						<version>3.0</version>
-						<usePhrasedFileName>false</usePhrasedFileName>
-						<usePhrasedTestSuiteClassName>true</usePhrasedTestSuiteClassName>
-						<usePhrasedTestCaseClassName>true</usePhrasedTestCaseClassName>
-						<usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
-					</statelessTestsetReporter>
+<!--					<statelessTestsetReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">-->
+<!--						<disable>false</disable>-->
+<!--						<version>3.0</version>-->
+<!--						<usePhrasedFileName>false</usePhrasedFileName>-->
+<!--						<usePhrasedTestSuiteClassName>true</usePhrasedTestSuiteClassName>-->
+<!--						<usePhrasedTestCaseClassName>true</usePhrasedTestCaseClassName>-->
+<!--						<usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>-->
+<!--					</statelessTestsetReporter>-->
 				</configuration>
 			</plugin>
 <!--			<plugin>-->
@@ -201,30 +222,30 @@
 <!--					</execution>-->
 <!--				</executions>-->
 <!--			</plugin>-->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.3.0</version>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<!-- here the phase you need -->
-						<phase>validate</phase>
-						<goals>
-							<goal>testResources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target/extra-resources</outputDirectory>
-							<resources>
-								<resource>
-									<directory>src/non-packaged-resources</directory>
-									<filtering>true</filtering>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-resources-plugin</artifactId>-->
+<!--				<version>3.3.0</version>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>copy-resources</id>-->
+<!--						&lt;!&ndash; here the phase you need &ndash;&gt;-->
+<!--						<phase>validate</phase>-->
+<!--						<goals>-->
+<!--							<goal>testResources</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<outputDirectory>${basedir}/target/extra-resources</outputDirectory>-->
+<!--							<resources>-->
+<!--								<resource>-->
+<!--									<directory>src/non-packaged-resources</directory>-->
+<!--									<filtering>true</filtering>-->
+<!--								</resource>-->
+<!--							</resources>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
 		</plugins>
 	</build>
 </project>

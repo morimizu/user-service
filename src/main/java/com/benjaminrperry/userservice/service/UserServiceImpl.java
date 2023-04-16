@@ -4,13 +4,12 @@ import com.benjaminrperry.userservice.dto.CreateUserDTO;
 import com.benjaminrperry.userservice.dto.UserDTO;
 import com.benjaminrperry.userservice.entity.UserJpa;
 import com.benjaminrperry.userservice.repository.UserRepository;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Valid;
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 
 import static com.benjaminrperry.userservice.converter.UserConverter.toDto;
 

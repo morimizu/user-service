@@ -12,7 +12,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = "com.benjaminrperry.userservice.repository")
 public class UserServiceApplication implements WebMvcConfigurer {
 
 	public static void main(String[] args) {

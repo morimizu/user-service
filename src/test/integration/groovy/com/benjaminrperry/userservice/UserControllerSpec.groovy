@@ -1,36 +1,34 @@
-import com.benjaminrperry.userservice.controller.UserController
+package com.benjaminrperry.userservice
+
 import com.benjaminrperry.userservice.dto.CreateUserDTO
-import com.benjaminrperry.userservice.repository.UserRepository
+import com.benjaminrperry.userservice.entity.UserJpa
 import com.benjaminrperry.userservice.service.UserService
-import com.benjaminrperry.userservice.service.UserServiceImpl
+import com.benjaminrperry.userservice.validation.UserValidator
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.junit.jupiter.api.extension.ExtendWith
+import groovy.json.JsonBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.http.MediaType
-import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
 
+import static org.hamcrest.Matchers.containsString
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = [TestConfig.class])
-@WebMvcTest([UserController.class])
+@ContextConfiguration(classes = TestConfig.class)
+@WebMvcTest
 class UserControllerSpec extends Specification {
 
     @Autowired
     MockMvc mockMvc
 
-    @Autowired
-//    @Named("mockUserRepository")
-    UserRepository userRepository
 
     @Shared
     ObjectMapper objectMapper = new ObjectMapper()
@@ -38,17 +36,35 @@ class UserControllerSpec extends Specification {
     @Shared
     Random random = new Random()
 
-    def 'register user'() {
+    @Autowired
+    UserService userService
+
+    @Autowired
+    UserValidator userValidator
+
+
+    @Unroll
+    def "validation works correctly- #test"() {
         given:
         def dto = randomUserDto()
-        userRepository.findByUsername(_) >> null
-        userRepository.findByEmail(_) >> null
+        userValidator.usernameValid(_) >> userValid
+        userValidator.emailValid(_) >> emailValid
+        userService.registerNewUser(_) >> new UserJpa()
 
         when:
         def result = mockMvc.perform(post("http://localhost:8080/users", dto))
 
         then:
-        result.andExpect(status().isOk())
+        expectations.stream().forEach { result::andExpect { it } }
+
+
+        where:
+        test               | userValid | emailValid | expectations
+        'dto is valid'     | true      | true       | [status().isOk()]
+        'invalid username' | false     | true       | [status().isBadRequest(),
+                                                       status().reason(containsString("already exists"))]
+        'invalid email'    | true      | false      | [status().isBadRequest(),
+                                                       status().reason(containsString("already exists"))]
     }
 
     def randomUserDto() {
@@ -68,7 +84,7 @@ class UserControllerSpec extends Specification {
     }
 
     def toJson(content) {
-        objectMapper.writeValueAsString(content)
+        new JsonBuilder(content).toString()
     }
 
     @TestConfiguration
@@ -77,17 +93,13 @@ class UserControllerSpec extends Specification {
 
         @Bean
         UserService userService() {
-            return new UserServiceImpl(mockUserRepository())
+            return mockFactory.Mock(UserService)
         }
 
         @Bean
-        UserRepository mockUserRepository() {
-            return mockFactory.Mock(UserRepository)
+        UserValidator userValidator() {
+            return mockFactory.Mock(UserValidator)
         }
 
-        @Bean
-        UserController userController() {
-            return new UserController(userService())
-        }
     }
 }

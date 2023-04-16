@@ -1,14 +1,18 @@
-import com.benjaminrperry.userservice.UserServiceApplication
+package com.benjaminrperry.userservice
+
+
 import com.benjaminrperry.userservice.dto.CreateUserDTO
 import com.benjaminrperry.userservice.service.UserService
-import jakarta.validation.ConstraintViolationException
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-@ContextConfiguration(classes = [UserServiceApplication.class])
+import javax.validation.ConstraintViolationException
+
+@SpringBootTest
 class UserServiceSpec extends Specification {
 
     @Autowired
